@@ -3,7 +3,7 @@ const JWT = require('jsonwebtoken');
 
 
 
-const userSchema = mongoose.Schema({
+const UserSchema = mongoose.Schema({
     username:{
         type:String,
         required:true,
@@ -43,19 +43,27 @@ const userSchema = mongoose.Schema({
     }
 },{
     timestamps:true,
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
 });
 
 
 
+UserSchema.virtual('posts',{
+    ref:'Post',
+    foreignField: 'user',
+    localField :'_id'
+})
+
 //generate Token 
 
-userSchema.methods.generateAuthToken = function(){
+UserSchema.methods.generateAuthToken = function(){
    return JWT.sign({ id: this._id,isAdmin: this.isAdmin}, process.env.SECRET_JWT,{
     expiresIn:'30d'
    })
 }
 
-const User = mongoose.model('User',userSchema);
+const User = mongoose.model('User',UserSchema);
 
 
 module.exports = User;

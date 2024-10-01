@@ -2,6 +2,7 @@ const express = require('express');
 const connectDb = require('./config/connectToDB');
 const authRouter = require('./routes/authRouter');
 const userRouter = require('./routes/userRouter');
+const postRouter = require('./routes/postRouter');
 // connect to DB
 
 connectDb();
@@ -21,6 +22,7 @@ app.use(express.json())
 
 app.use('/api/auth',authRouter);
 app.use('/api/users',userRouter);
+app.use('/api/post',postRouter);
 
 
 
