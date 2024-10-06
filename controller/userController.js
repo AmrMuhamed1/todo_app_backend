@@ -4,9 +4,11 @@ var createError = require('http-errors');
 const{ validateUpdateUser} = require('../validation/UserValidation')
 const bcrypt = require('bcryptjs');
 const path = require('path')
-const {cloudinaryUploadFunction,cloudinaryRemoveFunction} = require('../utils/cloudinary');
+const {cloudinaryUploadFunction,cloudinaryRemoveFunction,cloudinaryMultiRemoveFunction} = require('../utils/cloudinary');
 const { url } = require('inspector');
-const fs = require('fs')
+const fs = require('fs');
+const Comment =require('../controller/postController')
+const Post =require('../controller/postController')
 
 
 
@@ -188,13 +190,22 @@ console.log(req.params.id )
         return next(createError(404, 'not found'))
     }
 
+     const posts = await Post.find({user:user._id});
 
+     const publicIds = posts.map((post)=>post.image.publicId);
 
+     if(publicIds>0){
+       await cloudinaryMultiRemoveFunction(publicIds);
+     }
 
 
     //5) delete the profile photo 
 
-        await cloudinaryRemoveFunction(user.profilePhoto.publicId)
+        await cloudinaryRemoveFunction(user.profilePhoto.publicId);
+
+        await Post.deleteMany({user:user._id});
+
+        await Comment.deleteMany({user:user._id});
     
 
 

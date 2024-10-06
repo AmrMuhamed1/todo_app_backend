@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const path = require('path')
 const {cloudinaryUploadFunction,cloudinaryRemoveFunction} = require('../utils/cloudinary');
 const fs = require('fs');
-const { title } = require('process');
+const Comment = require('../models/comment')
 
 
 //desc createNewPost
@@ -109,7 +109,7 @@ exports.getAllPosts = asyncHandler(async(req,res,next)=>{
 
 exports.getOnePost = asyncHandler(async(req,res,next)=>{
 
-    const post = await Post.findById(req.params.id).populate('user',['-password']);
+    const post = await Post.findById(req.params.id).populate('user',['-password']).populate('comment');
 
     if(!post){
         return next(createError(404,'post not found'))
@@ -147,6 +147,9 @@ exports.deletePost = asyncHandler(async(req,res,next)=>{
     await Post.findByIdAndDelete(req.params.id);
 
     await cloudinaryRemoveFunction(post.image.publicId);
+
+
+    await Comment.deleteMany({postId: post._id})
 
 
     res.status(200).json({

@@ -4,6 +4,7 @@ const authRouter = require('./routes/authRouter');
 const userRouter = require('./routes/userRouter');
 const postRouter = require('./routes/postRouter');
 const commentRouter = require('./routes/commentRouter');
+const { errorHandler } = require('./middlewares/error');
 // connect to DB
 
 connectDb();
@@ -24,7 +25,8 @@ app.use(express.json())
 app.use('/api/auth',authRouter);
 app.use('/api/users',userRouter);
 app.use('/api/post',postRouter);
-app.use('/api/comment',postRouter);
+app.use('/api/comment',commentRouter);
+app.use(errorHandler);
 
 
 

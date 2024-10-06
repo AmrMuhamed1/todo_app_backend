@@ -29,7 +29,20 @@ const cloudinaryRemoveFunction = async (imagePublicId)=>{
     }
 }
 
+const cloudinaryMultiRemoveFunction = async (publicIds)=>{
+    try{
+        const result = await cloudinary.uploader.v2.api.delete_resources(publicIds)
+        return result;
+        
+    }catch(e){
+        return error;
+
+    }
+}
+
+
 module.exports ={
     cloudinaryUploadFunction,
     cloudinaryRemoveFunction,
+    cloudinaryMultiRemoveFunction
 }
